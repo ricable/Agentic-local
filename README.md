@@ -193,6 +193,7 @@ Your cluster topology:
 
 ### Technical Analysis
 - **[Sovereign Agentic Architectures](docs/technical-analysis/sovereign-agentic-architectures.md)** - Complete technical deep-dive (8000+ words)
+- **[MCP Gateway & Coding Agent Safety](docs/technical-analysis/mcp-gateway-coding-agent-safety.md)** - Docker's new approach to agent isolation (NEW)
 
 ### Examples
 - **[Basic Agent](src/orchestration/basic-agent.js)** - Simple code generation

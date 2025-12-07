@@ -344,9 +344,45 @@ Host macOS
 - Trust AI-generated code without sandboxing
 - Ignore timeout or resource limit violations
 
+## Docker MCP Gateway (Experimental)
+
+As of Docker Desktop 4.50 (November 2025), Docker has introduced an experimental approach to running coding agents safely through their **MCP Gateway**. This provides an alternative to manual Docker sandbox configuration with centralized management capabilities.
+
+### Key Features
+
+- **Centralized Policy Management**: Define security policies in one place for all agents
+- **Automatic Lifecycle Management**: Gateway starts/stops MCP servers as needed
+- **Built-in Audit Logging**: Full visibility into AI tool activity
+- **Credential Isolation**: Secrets injected securely without agent access
+- **Catalog Access**: 200+ pre-vetted MCP servers available
+
+### Quick Start with MCP Gateway
+
+```bash
+# With Docker Desktop 4.50+ installed
+docker sandbox run claude-code
+
+# Or configure manually:
+docker mcp server enable code-sandbox
+docker mcp client connect claude-code
+docker mcp gateway run
+```
+
+### MicroVM Roadmap
+
+Docker has announced plans to enhance isolation using **MicroVMs** (Firecracker-like technology) for:
+- Hardware-virtualized isolation per agent
+- Independent kernel per agent
+- Stronger container escape protection
+
+📖 **[Full MCP Gateway Analysis →](../technical-analysis/mcp-gateway-coding-agent-safety.md)**
+
+---
+
 ## Further Reading
 
 - [Docker Security Best Practices](https://docs.docker.com/engine/security/)
+- [Docker MCP Gateway Documentation](https://docs.docker.com/ai/mcp-gateway/)
 - [OWASP Docker Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html)
 - [CIS Docker Benchmark](https://www.cisecurity.org/benchmark/docker)
 
