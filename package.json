@@ -5,15 +5,20 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "update-ruvnet": "ncu -u -f '/^@?ruvnet\\b/'",
-    "check-updates": "ncu -f '/^@?ruvnet\\b/'",
+    "update-ruvnet": "ncu -u -f '/^@?ruvnet\\b|^ruvllm$|^agentdb$/'",
+    "check-updates": "ncu -f '/^@?ruvnet\\b|^ruvllm$|^agentdb$/'",
     "setup": "npm install && npm run check-docker && npm run check-wasmedge",
+    "setup:distributed": "node scripts/setup-distributed.js",
     "check-docker": "docker --version || echo 'Docker not installed. Please install Docker Desktop for Mac.'",
     "check-wasmedge": "wasmedge --version || echo 'WasmEdge not installed. Run: curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash'",
     "start:agent": "node src/orchestration/start-agent.js",
+    "start:quad": "node src/orchestration/quad-orchestrator.js",
+    "start:qdag": "node src/orchestration/qdag-orchestrator.js",
     "start:gaianet": "gaianet start",
     "stop:gaianet": "gaianet stop",
-    "sandbox:test": "node src/sandbox/test-sandbox.js"
+    "sandbox:test": "node src/sandbox/test-sandbox.js",
+    "cluster:init": "node src/distributed/init-cluster.js",
+    "cluster:status": "node src/distributed/cluster-status.js"
   },
   "keywords": [
     "ai",
@@ -32,6 +37,10 @@
     "agentic-flow": "^1.7.7",
     "claude-flow": "^2.7.10",
     "ruv-swarm": "^1.0.20",
+    "ruvllm": "latest",
+    "agentdb": "latest",
+    "@ruv/quad": "latest",
+    "@ruv/qdag": "latest",
     "strange-loops": "latest",
     "strange-loops-mcp": "latest",
     "sublinear-time-solver": "latest",
@@ -41,7 +50,10 @@
     "create-sparc": "^1.2.4",
     "dotenv": "^16.3.1",
     "ws": "^8.16.0",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "better-sqlite3": "^9.2.2",
+    "ioredis": "^5.3.2",
+    "node-machine-id": "^1.1.12"
   },
   "devDependencies": {
     "npm-check-updates": "^16.14.12",

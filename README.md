@@ -1,24 +1,29 @@
 # Sovereign Agentic Stack
 
-> **Build, orchestrate, and monetize AI agents entirely on your own hardware—zero cloud costs, infinite usage.**
+> **Build, orchestrate, and monetize AI agents entirely on your own hardware—zero cloud costs, infinite usage, distributed compute.**
 
-A complete, production-ready implementation of the "Sovereign AI" paradigm: high-performance local inference (WasmEdge + MLX on Apple Silicon), sophisticated agent orchestration (ruvnet ecosystem), secure code execution (Docker sandbox), and optional monetization (GaiaNet network).
+A complete, production-ready implementation of the "Sovereign AI" paradigm: high-performance local inference (WasmEdge + MLX on Apple Silicon), sophisticated agent orchestration (ruvnet ecosystem with QUAD/QDAG), distributed cluster execution, secure code execution (Docker sandbox), and optional monetization (GaiaNet network).
+
+**NEW**: Distributed cluster support across heterogeneous hardware (Raspberry Pi, Intel NUC, Mac Studio, MacBook)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org/)
 [![Docker](https://img.shields.io/badge/docker-required-blue)](https://www.docker.com/)
+[![Distributed](https://img.shields.io/badge/distributed-ready-green)](docs/setup-guides/distributed-cluster-setup.md)
 
 ---
 
 ## 🎯 What is This?
 
-This repository provides a **complete sovereign AI stack** that runs entirely on your local machine (optimized for Apple Silicon M1/M2/M3). It enables you to:
+This repository provides a **complete sovereign AI stack** that runs on your hardware—from a single Mac to a full heterogeneous cluster spanning Raspberry Pis, Intel NUCs, and Apple Silicon machines. It enables you to:
 
 - 🤖 **Orchestrate autonomous AI agents** that can write, test, and debug code
+- 🌐 **Distribute workloads** across your entire home/office cluster with QUAD/QDAG orchestration
 - 🚀 **Run inference locally** using state-of-the-art models (Qwen 2.5 Coder) with GPU acceleration
 - 🔒 **Execute AI-generated code securely** in isolated Docker containers
-- 💰 **Monetize idle compute** by serving inference requests via GaiaNet network
-- ⚡ **Achieve 352x speedup** for code operations using WASM-accelerated Agent Booster
+- 💰 **Monetize idle compute** by serving inference requests via GaiaNet network ($720-1,300/month potential)
+- ⚡ **Achieve 352x speedup** for code operations using WASM-accelerated Agent Booster + Rust crates
+- 🏠 **Build your own AI data center** from consumer hardware
 
 **Cost**: $0 for unlimited local usage. Optionally earn crypto by serving external requests.
 
@@ -146,14 +151,45 @@ console.log(result.code);
 
 📖 **[Full Quick Start Guide →](docs/examples/quickstart.md)**
 
+### Distributed Cluster Setup
+
+Build a home AI data center from heterogeneous hardware:
+
+```bash
+# On each machine (Raspberry Pi, NUC, Mac):
+git clone <your-repo-url>
+cd Agentic-local
+
+# Auto-detects hardware and configures appropriately
+./scripts/setup-distributed.sh
+
+# Join the cluster
+npm run cluster:init
+
+# Check cluster status
+npm run cluster:status
+```
+
+Your cluster topology:
+- **MacBook M3 Max** (128GB) → Super-coordinator, heavy inference, earns $300-500/month
+- **Mac Studio M1** (64GB) → Coordinator, large models, earns $120-200/month
+- **Intel NUCs** (×10, 32GB each) → Workers, earns $30-60/month each
+- **Raspberry Pi** → Edge processing, monitoring
+
+**Total potential**: $720-1,300/month while having free local AI
+
+📖 **[Full Distributed Setup Guide →](docs/setup-guides/distributed-cluster-setup.md)**
+
 ---
 
 ## 📚 Documentation
 
 ### Setup Guides
-- **[Quick Start](docs/examples/quickstart.md)** - Get running in 10 minutes
+- **[Quick Start](docs/examples/quickstart.md)** - Get running in 10 minutes (single machine)
+- **[Distributed Cluster Setup](docs/setup-guides/distributed-cluster-setup.md)** - Multi-machine cluster
 - **[GaiaNet Monetization](docs/setup-guides/gaianet-monetization.md)** - Earn crypto from your node
 - **[Sandbox Security](docs/setup-guides/sandbox-security.md)** - Understand the security model
+- **[Rust Crates Integration](docs/setup-guides/rust-crates-integration.md)** - 352x speedup with native modules
 
 ### Technical Analysis
 - **[Sovereign Agentic Architectures](docs/technical-analysis/sovereign-agentic-architectures.md)** - Complete technical deep-dive (8000+ words)
@@ -161,6 +197,8 @@ console.log(result.code);
 ### Examples
 - **[Basic Agent](src/orchestration/basic-agent.js)** - Simple code generation
 - **[Swarm Intelligence](src/orchestration/swarm-agent.js)** - Multi-agent collaboration
+- **[QUAD Orchestrator](src/orchestration/quad-orchestrator.js)** - Distributed task execution
+- **[QDAG Orchestrator](src/orchestration/qdag-orchestrator.js)** - DAG workflow pipelines
 - **[Sandbox Tests](src/sandbox/test-sandbox.js)** - Security verification
 
 ---
@@ -358,8 +396,19 @@ Transform your idle compute into passive income:
 | agentic-flow | 1.7.7 | Swarm orchestration |
 | claude-flow | 2.7.10 | Enterprise workflows |
 | ruv-swarm | 1.0.20 | Neural swarm ops |
+| **@ruv/quad** | latest | **Distributed task execution** |
+| **@ruv/qdag** | latest | **DAG workflow pipelines** |
+| **ruvllm** | latest | **Intelligent LLM load balancing** |
+| **agentdb** | latest | **Distributed agent state** |
 | strange-loops | latest | Emergent intelligence |
 | @agentics.org/sparc2 | 2.0.25 | SPARC methodology |
+
+### Rust Crates (Optional, for 352x speedup)
+
+- **agent-booster** - Code transformation engine
+- **neural-solver** - Mathematical operations
+- **swarm-runtime** - 500k+ ops/sec distributed execution
+- **vector-db** - High-performance similarity search
 
 ### Infrastructure
 
