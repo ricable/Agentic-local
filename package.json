@@ -1,0 +1,54 @@
+{
+  "name": "sovereign-agentic-stack",
+  "version": "1.0.0",
+  "description": "Local-first agentic architecture with WasmEdge, GaiaNet, and ruvnet ecosystem",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "update-ruvnet": "ncu -u -f '/^@?ruvnet\\b/'",
+    "check-updates": "ncu -f '/^@?ruvnet\\b/'",
+    "setup": "npm install && npm run check-docker && npm run check-wasmedge",
+    "check-docker": "docker --version || echo 'Docker not installed. Please install Docker Desktop for Mac.'",
+    "check-wasmedge": "wasmedge --version || echo 'WasmEdge not installed. Run: curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash'",
+    "start:agent": "node src/orchestration/start-agent.js",
+    "start:gaianet": "gaianet start",
+    "stop:gaianet": "gaianet stop",
+    "sandbox:test": "node src/sandbox/test-sandbox.js"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "wasmedge",
+    "gaianet",
+    "local-ai",
+    "sovereign-ai",
+    "depin",
+    "mlx",
+    "apple-silicon"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "agentic-flow": "^1.7.7",
+    "claude-flow": "^2.7.10",
+    "ruv-swarm": "^1.0.20",
+    "strange-loops": "latest",
+    "strange-loops-mcp": "latest",
+    "sublinear-time-solver": "latest",
+    "temporal-neural-solver": "latest",
+    "@ruv/sparc-ui": "latest",
+    "@agentics.org/sparc2": "^2.0.25",
+    "create-sparc": "^1.2.4",
+    "dotenv": "^16.3.1",
+    "ws": "^8.16.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^16.14.12",
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
