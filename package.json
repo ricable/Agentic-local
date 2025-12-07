@@ -1,16 +1,17 @@
 {
   "name": "edge-native-ai",
-  "version": "2.0.0",
-  "description": "Decentralized Edge-Native AI Platform with Kairos, SpinKube, K3s, and Agentic Protocols",
+  "version": "2.1.0",
+  "description": "Decentralized Edge-Native AI Platform with Full Ruvnet Ecosystem Integration",
   "type": "module",
-  "main": "src/ruvnet/index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "start:api": "cd src/api && uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
     "start:gateway": "node src/gateway/index.js",
+    "start:ruvnet": "node src/ruvnet-ecosystem/index.js",
 
-    "update-ruvnet": "ncu -u -f '/^@?ruvnet\\b|^ruvllm$|^agentdb$|^ruvector$/'",
-    "check-updates": "ncu -f '/^@?ruvnet\\b|^ruvllm$|^agentdb$|^ruvector$/'",
+    "update-ruvnet": "ncu -u -f '/^@?ruv|^agentic-flow|^claude-flow|^agentdb|^ruvector|^strange-loops|neural-trader/'",
+    "check-updates": "ncu -f '/^@?ruv|^agentic-flow|^claude-flow|^agentdb|^ruvector|^strange-loops|neural-trader/'",
 
     "setup": "npm install && npm run check-docker && npm run check-wasmedge",
     "setup:distributed": "node scripts/setup-distributed.js",
@@ -21,6 +22,7 @@
     "check-k3s": "k3s --version || echo 'K3s not installed'",
 
     "start:agent": "node src/orchestration/start-agent.js",
+    "start:swarm": "node src/ruvnet-ecosystem/swarm-demo.js",
     "start:quad": "node src/orchestration/quad-orchestrator.js",
     "start:qdag": "node src/orchestration/qdag-orchestrator.js",
     "start:gaianet": "gaianet start",
@@ -36,13 +38,20 @@
     "k8s:delete": "kubectl delete -f infrastructure/k3s/",
     "spinkube:deploy": "kubectl apply -f infrastructure/spinkube/",
 
-    "test": "node --test",
+    "test": "node --test src/**/*.test.js",
+    "test:ruvnet": "node --test src/ruvnet-ecosystem/**/*.test.js",
     "lint": "eslint src/",
     "build:wasm": "cargo build --target wasm32-wasi --release"
   },
   "keywords": [
     "ai",
     "agents",
+    "ruvnet",
+    "agentic-flow",
+    "claude-flow",
+    "agentdb",
+    "ruvector",
+    "ruv-swarm",
     "edge-native",
     "kairos",
     "spinkube",
@@ -60,26 +69,38 @@
     "mlx",
     "apple-silicon",
     "distributed",
-    "decentralized"
+    "decentralized",
+    "neural-networks",
+    "strange-loops",
+    "multi-agent"
   ],
   "author": "Edge-Native AI Team",
   "license": "MIT",
   "dependencies": {
-    "agentic-flow": "^1.7.7",
-    "claude-flow": "^2.7.10",
-    "ruv-swarm": "^1.0.20",
-    "ruvllm": "latest",
-    "agentdb": "latest",
+    "agentic-flow": "^1.10.2",
+    "claude-flow": "^2.7.41",
+    "agentdb": "^1.6.1",
     "ruvector": "latest",
+
+    "ruv-swarm": "latest",
     "@ruv/quad": "latest",
     "@ruv/qdag": "latest",
+    "ruvllm": "latest",
+
     "strange-loops": "latest",
     "strange-loops-mcp": "latest",
+    "@ruvnet/strange-loop": "latest",
+
     "sublinear-time-solver": "latest",
     "temporal-neural-solver": "latest",
+
+    "@ruvnet/bmssp": "latest",
+
+    "neural-trader": "latest",
+
     "@ruv/sparc-ui": "latest",
     "@agentics.org/sparc2": "^2.0.25",
-    "create-sparc": "^1.2.4",
+    "create-sparc": "latest",
 
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
