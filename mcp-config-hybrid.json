@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Hybrid MCP Configuration for Sovereign Agentic Stack",
+  "version": "2.0.0",
+
+  "mode": "hybrid",
+
+  "mcpServers": {
+    "docker-sandbox": {
+      "description": "Custom Docker sandbox for code execution (local)",
+      "command": "node",
+      "args": [
+        "./src/sandbox/hybrid-sandbox.js"
+      ],
+      "env": {
+        "SANDBOX_TYPE": "docker",
+        "SANDBOX_MEMORY_LIMIT": "2g",
+        "SANDBOX_CPU_LIMIT": "2",
+        "SANDBOX_TIMEOUT": "300000",
+        "SANDBOX_NETWORK": "none",
+        "ALLOWED_LANGUAGES": "javascript,typescript,python",
+        "SANDBOX_VOLUMES": "./sandbox-volumes",
+        "HYBRID_SANDBOX_MODE": "hybrid",
+        "MCP_GATEWAY_URL": "http://localhost:8811"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "execute_code",
+        "execute_javascript",
+        "execute_python",
+        "execute_typescript",
+        "run_tests"
+      ]
+    },
+
+    "filesystem": {
+      "description": "Filesystem access via MCP Gateway",
+      "backend": "gateway",
+      "server": "filesystem",
+      "command": "docker",
+      "args": [
+        "mcp", "gateway", "proxy",
+        "--server", "filesystem"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "read_file",
+        "list_directory"
+      ]
+    },
+
+    "duckduckgo": {
+      "description": "Web search via MCP Gateway",
+      "backend": "gateway",
+      "server": "duckduckgo",
+      "command": "docker",
+      "args": [
+        "mcp", "gateway", "proxy",
+        "--server", "duckduckgo"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "search"
+      ]
+    },
+
+    "memory": {
+      "description": "Semantic memory via MCP Gateway",
+      "backend": "gateway",
+      "server": "memory",
+      "command": "docker",
+      "args": [
+        "mcp", "gateway", "proxy",
+        "--server", "memory"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "store",
+        "retrieve",
+        "search"
+      ]
+    }
+  },
+
+  "gateway": {
+    "url": "http://localhost:8811",
+    "policy": "./config/mcp-gateway/sovereign-stack-policy.yaml",
+    "autoStart": true,
+    "healthCheckInterval": 30000
+  },
+
+  "routing": {
+    "local": [
+      "execute_code",
+      "execute_javascript",
+      "execute_python",
+      "execute_typescript",
+      "run_tests",
+      "compile_code"
+    ],
+    "gateway": [
+      "filesystem",
+      "duckduckgo",
+      "memory",
+      "fetch",
+      "github",
+      "sequential-thinking"
+    ]
+  },
+
+  "security": {
+    "profile": "standard",
+    "auditEnabled": true,
+    "auditLogPath": "./logs/mcp-audit.log"
+  },
+
+  "globalSettings": {
+    "timeout": 30000,
+    "retries": 3,
+    "logLevel": "info"
+  }
+}

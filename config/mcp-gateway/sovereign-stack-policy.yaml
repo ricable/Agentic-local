@@ -1,0 +1,380 @@
+# MCP Gateway Security Policy for Sovereign Agentic Stack
+#
+# This policy defines security boundaries for MCP servers running through
+# Docker's MCP Gateway. Use with: docker mcp gateway run --policy <path>
+#
+# Policy Levels:
+# - standard: Balanced security for general development
+# - paranoid: Maximum isolation for sensitive environments
+# - development: Relaxed settings for local testing
+
+version: "1.0"
+name: sovereign-stack-policy
+description: Security policy for Sovereign Agentic Stack hybrid sandbox
+
+# Global defaults applied to all servers
+defaults:
+  # Network isolation
+  network: none
+
+  # Resource limits
+  memory: 1g
+  cpu: 1
+  timeout: 60s
+
+  # Security hardening
+  read_only: true
+  cap_drop: ALL
+  security_opt:
+    - no-new-privileges
+
+  # Container cleanup
+  remove_on_exit: true
+
+  # Logging
+  log_driver: json-file
+  log_opts:
+    max-size: "10m"
+    max-file: "3"
+
+# Server-specific configurations
+servers:
+  # ==========================================================================
+  # CODE EXECUTION (Handled by custom DockerSandbox, not Gateway)
+  # This section documents settings for reference only.
+  # Actual code execution uses src/sandbox/docker-sandbox.js
+  # ==========================================================================
+  code-sandbox:
+    enabled: false  # Handled by HybridSandbox directly
+    description: "Code execution handled by custom DockerSandbox"
+    notes: |
+      Code execution requires fine-grained control not available through Gateway.
+      The HybridSandbox routes code execution to the local DockerSandbox class.
+
+  # ==========================================================================
+  # FILESYSTEM ACCESS
+  # Read-only access to project directories through Gateway
+  # ==========================================================================
+  filesystem:
+    enabled: true
+    description: "Safe filesystem access to project directories"
+
+    # Network stays disabled - no need for filesystem access
+    network: none
+
+    # Resource limits
+    memory: 256m
+    cpu: 0.5
+    timeout: 30s
+
+    # Volume mounts - read-only access to specific directories
+    volumes:
+      - "${PWD}/src:/workspace/src:ro"
+      - "${PWD}/docs:/workspace/docs:ro"
+      - "${PWD}/config:/workspace/config:ro"
+      - "${PWD}/scripts:/workspace/scripts:ro"
+
+    # Explicitly blocked paths
+    blocked_paths:
+      - "/etc"
+      - "/var"
+      - "/root"
+      - "~/.ssh"
+      - "~/.aws"
+      - "~/.config"
+      - ".env"
+      - ".env.*"
+      - "**/secrets/**"
+      - "**/*.key"
+      - "**/*.pem"
+
+    # Allowed operations
+    allowed_tools:
+      - read_file
+      - list_directory
+      - search_files
+      - get_file_info
+
+  # ==========================================================================
+  # WEB SEARCH (DuckDuckGo)
+  # Limited network access for search queries only
+  # ==========================================================================
+  duckduckgo:
+    enabled: true
+    description: "Web search via DuckDuckGo"
+
+    # Bridge network with domain restrictions
+    network: bridge
+    allowed_domains:
+      - duckduckgo.com
+      - api.duckduckgo.com
+      - html.duckduckgo.com
+
+    # Minimal resources for search
+    memory: 256m
+    cpu: 0.5
+    timeout: 30s
+
+    # Rate limiting
+    rate_limit:
+      requests_per_minute: 10
+      burst: 5
+
+    # Allowed operations
+    allowed_tools:
+      - search
+
+  # ==========================================================================
+  # BRAVE SEARCH (Alternative)
+  # ==========================================================================
+  brave-search:
+    enabled: false
+    description: "Web search via Brave Search API"
+
+    network: bridge
+    allowed_domains:
+      - api.search.brave.com
+
+    memory: 256m
+    cpu: 0.5
+    timeout: 30s
+
+    rate_limit:
+      requests_per_minute: 10
+
+    # Requires API key via credentials
+    credentials:
+      - name: BRAVE_API_KEY
+        source: env
+        required: true
+
+  # ==========================================================================
+  # FETCH (HTTP Requests)
+  # Controlled external HTTP access
+  # ==========================================================================
+  fetch:
+    enabled: true
+    description: "HTTP fetch with domain restrictions"
+
+    network: bridge
+
+    # Allowed domains for fetch operations
+    allowed_domains:
+      - "*.githubusercontent.com"
+      - "raw.githubusercontent.com"
+      - "api.github.com"
+      - "registry.npmjs.org"
+      - "pypi.org"
+      - "crates.io"
+
+    # Blocked domains
+    blocked_domains:
+      - "*.internal"
+      - "localhost"
+      - "127.0.0.1"
+      - "0.0.0.0"
+      - "169.254.*"
+      - "10.*"
+      - "192.168.*"
+
+    memory: 512m
+    cpu: 1
+    timeout: 60s
+
+    # Size limits
+    max_response_size: 10mb
+
+  # ==========================================================================
+  # GITHUB (Repository Access)
+  # ==========================================================================
+  github:
+    enabled: false  # Enable when needed with token
+    description: "GitHub API access"
+
+    network: bridge
+    allowed_domains:
+      - api.github.com
+      - github.com
+
+    memory: 256m
+    cpu: 0.5
+    timeout: 60s
+
+    # GitHub token via credentials
+    credentials:
+      - name: GITHUB_TOKEN
+        source: env
+        required: true
+
+    # Rate limiting aligned with GitHub API limits
+    rate_limit:
+      requests_per_minute: 30
+
+    # Allowed operations
+    allowed_tools:
+      - list_repos
+      - get_repo
+      - list_issues
+      - get_issue
+      - create_issue
+      - list_pull_requests
+      - get_pull_request
+
+    # Blocked dangerous operations
+    blocked_tools:
+      - delete_repo
+      - delete_branch
+      - force_push
+
+  # ==========================================================================
+  # MEMORY (Semantic Memory/Vector Store)
+  # ==========================================================================
+  memory:
+    enabled: true
+    description: "Semantic memory for agent context"
+
+    network: none  # No network needed
+
+    memory: 512m
+    cpu: 1
+    timeout: 30s
+
+    # Persistent storage for memory
+    volumes:
+      - "${PWD}/data/memory:/memory:rw"
+
+  # ==========================================================================
+  # SEQUENTIAL THINKING
+  # ==========================================================================
+  sequential-thinking:
+    enabled: true
+    description: "Structured reasoning and planning"
+
+    network: none
+    memory: 256m
+    cpu: 0.5
+    timeout: 120s
+
+  # ==========================================================================
+  # PUPPETEER (Browser Automation)
+  # High security required due to browser capabilities
+  # ==========================================================================
+  puppeteer:
+    enabled: false  # Disabled by default - high risk
+    description: "Browser automation (use with caution)"
+
+    network: bridge
+    memory: 2g  # Browsers need more memory
+    cpu: 2
+    timeout: 300s
+
+    # Security hardening for browser
+    security_opt:
+      - no-new-privileges
+      - seccomp=chrome.json
+
+    # Sandboxed browser flags
+    browser_args:
+      - "--no-sandbox"  # Already in container
+      - "--disable-dev-shm-usage"
+      - "--disable-gpu"
+      - "--disable-extensions"
+
+    # Domain restrictions
+    allowed_domains:
+      - "*.example.com"  # Configure per use case
+
+# ==========================================================================
+# AUDIT CONFIGURATION
+# ==========================================================================
+audit:
+  enabled: true
+
+  # Log all tool calls
+  log_path: ./logs/mcp-gateway-audit.log
+
+  # Include truncated payloads (for debugging)
+  include_payloads: true
+  payload_max_length: 500
+
+  # Retention
+  retention_days: 30
+
+  # Alert on suspicious activity
+  alerts:
+    enabled: true
+    conditions:
+      - name: high_failure_rate
+        description: "Alert if >10% of calls fail"
+        threshold: 0.1
+        window: 5m
+
+      - name: rate_limit_exceeded
+        description: "Alert on rate limit violations"
+        threshold: 5
+        window: 1m
+
+      - name: blocked_domain_attempt
+        description: "Alert on attempts to access blocked domains"
+        threshold: 1
+        window: 1m
+
+# ==========================================================================
+# CREDENTIAL MANAGEMENT
+# ==========================================================================
+credentials:
+  # Credentials are injected securely into containers
+  # Never exposed to agent code
+
+  sources:
+    - type: env
+      prefix: "MCP_"  # MCP_GITHUB_TOKEN -> GITHUB_TOKEN
+
+    - type: file
+      path: "${HOME}/.docker/mcp-secrets"
+
+  # Credential rotation reminder
+  rotation_warning_days: 30
+
+# ==========================================================================
+# POLICY PROFILES
+# ==========================================================================
+profiles:
+  # Standard profile (default)
+  standard:
+    description: "Balanced security for development"
+    # Uses defaults above
+
+  # Paranoid profile for sensitive work
+  paranoid:
+    description: "Maximum isolation"
+    defaults:
+      network: none
+      memory: 512m
+      cpu: 0.5
+      timeout: 30s
+    servers:
+      duckduckgo:
+        enabled: false
+      fetch:
+        enabled: false
+      github:
+        enabled: false
+      puppeteer:
+        enabled: false
+
+  # Development profile for testing
+  development:
+    description: "Relaxed settings for local testing"
+    defaults:
+      network: bridge
+      memory: 4g
+      cpu: 4
+      timeout: 600s
+    servers:
+      fetch:
+        allowed_domains:
+          - "*"  # Allow all in dev
+      filesystem:
+        volumes:
+          - "${PWD}:/workspace:rw"  # Full write access in dev

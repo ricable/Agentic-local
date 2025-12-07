@@ -187,6 +187,7 @@ Your cluster topology:
 ### Setup Guides
 - **[Quick Start](docs/examples/quickstart.md)** - Get running in 10 minutes (single machine)
 - **[Distributed Cluster Setup](docs/setup-guides/distributed-cluster-setup.md)** - Multi-machine cluster
+- **[Hybrid Sandbox Setup](docs/setup-guides/hybrid-sandbox-setup.md)** - MCP Gateway + DockerSandbox integration (NEW)
 - **[GaiaNet Monetization](docs/setup-guides/gaianet-monetization.md)** - Earn crypto from your node
 - **[Sandbox Security](docs/setup-guides/sandbox-security.md)** - Understand the security model
 - **[Rust Crates Integration](docs/setup-guides/rust-crates-integration.md)** - 352x speedup with native modules
@@ -200,6 +201,8 @@ Your cluster topology:
 - **[Swarm Intelligence](src/orchestration/swarm-agent.js)** - Multi-agent collaboration
 - **[QUAD Orchestrator](src/orchestration/quad-orchestrator.js)** - Distributed task execution
 - **[QDAG Orchestrator](src/orchestration/qdag-orchestrator.js)** - DAG workflow pipelines
+- **[Hybrid Sandbox](src/examples/hybrid-sandbox-example.js)** - MCP Gateway + DockerSandbox demo (NEW)
+- **[Agentic Flow Hybrid](src/examples/agentic-flow-hybrid.js)** - Agent integration example (NEW)
 - **[Sandbox Tests](src/sandbox/test-sandbox.js)** - Security verification
 
 ---
